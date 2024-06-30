@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  react:
+    build:
+      context: ./react-app
+      dockerfile: Dockerfile
+    volumes:
+      - ./react-app:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    command: npm start
+
+  flask:
+    build:
+      context: ./flask-app
+      dockerfile: Dockerfile
+    volumes:
+      - ./flask-app:/app
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=development
+    command: flask run --host=0.0.0.0 --port=5000
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+  mysql:
+    image: mysql:latest
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: mydatabase
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
